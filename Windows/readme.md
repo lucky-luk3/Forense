@@ -1,4 +1,11 @@
 # Windows
+## Misc
+[tool] SysINternals - Handle, show us wich process are using some file.  
+`PS>Get-ChildItem -Hidden C:\ -Recurse -ErrorAction SilentlyContinue | Select-Object Name,CreationTime,LastAccessTime,LastWriteTime | Export-Csv -NoTypeInformation fichero.csv`  &rarr; create a csv with files and some data  
+Use `\\?\` after path to access to a raw file. 
+`icacls.exe \\?\C:\Users\user1\Desktop\keys` &rarr; show you a acls of this file..  
+
+
 ## Recycle Bin
 ### Windows 10
 * [tool] Rifiuti (FoundStone)
@@ -14,10 +21,10 @@
                 * If $I* file doesn't exist, the user don't see this file in the app windows, even if the $R* file exist.
                 
 ## Prefetching `C:\Windows\Prefech`
-Superfetch it's a service running in windows that keep some information in **client** versions of windows. IN servers are disableb by default.
-When you start an app, the OS monitorize the file load and create a file with the path of application, dlls in the OS and pointers in de HD of this application.
-When you start an app the OS read this file first.
-Its useful to know if some app or file was open in the computer.
+Superfetch it's a service running in windows that keep some information in **client** versions of windows. IN servers are disableb by default.  
+When you start an app, the OS monitorize the file load and create a file with the path of application, dlls in the OS and pointers in de HD of this application.  
+When you start an app the OS read this file first.  
+Its useful to know if some app or file was open in the computer.  
 * [tool] Nirsoft - WinPrefetchView.
 * [tool] Prefetch Info - Mark McKinnon.
 * Info in the prefetch files:
@@ -35,18 +42,63 @@ Its useful to know if some app or file was open in the computer.
 
 ## Shadow Copy
 Copies that the system does when some file it's modified or some critial action are running in the computer. Differencial backup.
-* [tool] Sysinternals - WinObj &rarr; GLOBAL?? HarddiskVolumeShadowCopy
-* [tool] Windows - vssadmin &rarr; `list shadows`, `delete shadows`... manage shadow copies.
-`Options &rarr; Previus Version &rarr; File system`
-Configuration: `Computer &rarr; Manage/Properties &rarr; Advance settings &rarr; System Protection &rarr; Configure`
-Only 'System' can read this information:
+Service `Volume Shadow Copy`.  
+It's possible to do a dd copy from a shadowcopy.
+In Windows 8 Prvius Version are hidden.
+* [tool] Sysinternals - WinObj &rarr; GLOBAL?? HarddiskVolumeShadowCopy  
+* [tool] Windows - vssadmin &rarr; `list shadows`, `delete shadows`... manage shadow copies.  
+`File &rarr; Options &rarr; Previus Version &rarr; File system`  
+Configuration: `Computer &rarr; Manage/Properties &rarr; Advance settings &rarr; System Protection &rarr; Configure`  
+Only 'System' can read this information, it's hidden:
 * `AdminCMD>psexec -i -s cmd.exe`
     * `SystemCMD>cd "C:\System Volume Information"`
+```
+$s1 = (gwm1 -List Win32_ShadowCopy).Create("C:\", "ClientAccessible")
+$s2 = gwmi Win32_ShadowCopy | ? { $_.ID -eq $s1.ShadowID}
+$d = $s2.DeviceObject + "\"
+cmd /c mklink /d C:\shadowcopy "$d"
+```
+Are a registry key that is a black list, files or folders there are not saved.  
+`SYSTEM\CurrentControlSet\BackupRestore\FilesNotToBackup`  
+Mount shadowcopy:
+* `mklink /d c:\shadow \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy3\` Importan the last \.
+* `net share shadow=\\.\Harddisk\VolumeShadowCopy3\` &rarr; Share shadow copy to network.
+* In explorer `\\localhost\C$\@GMT-2020.01.10-13.29.43`  
 
+## Internet Explorer
+* [tool] Nirsoft
+* [tool] Nirsoft - BrowsingHistoryView
+Cache Win7 &rarr; `C:\User\user1\AppData\Local\Microsoft\Windows\INetCache\`  
+Cache Win7 &rarr; `C:\User\user1\AppData\Local\Microsoft\Temporary internet Files\`  
+IExplorer from PS `$ie = New-Object -ComObject InternetExplorer.Application`  
+
+## Mozilla
+* [tool] Mozilla - SQLiteManager
+* [tool] Nirsoft
+* `~\AppData\Roaming\Mozilla\Firefox\Profiles`
+    * cookies.sqlite
+    * formhistory.sqlite
+    * places.sqlite  &rarr; history
+    * signons.sqlite  &rarr; passwords
+
+## Chrome
+* [tool] Mozilla - SQLiteManager
+* [tool] Nirsoft
+* `~\AppData\Local\Google\Chrome\User Data\Default`
+    * cookies
+    * history  &rarr; history
+    * Login data
+    * Last session
+    * Current session
+    * Bookmarks
     
+## Pagefile
+When memory is full of data, the OS create pagefile and use it like memory.  
+`strings pagefile.sys > strings_pag.txt`  
+`findstr /I url strings_pag.txt`
 
 ## WMI
-You can search for the commands abailable to ask. Ejecute &rarr; WBEMTEST.
-Conect to a computer, Open Class, it's possible to search for a command and you can see the parameters and response.
+You can search for the commands abailable to ask. Ejecute &rarr; WBEMTEST.  
+Conect to a computer, Open Class, it's possible to search for a command and you can see the parameters and response.  
 ### Shortcut
 * `Get-WmiObject -Class win32_shortcutfile -ComputerName . | Export-Csv C:\tmp\shortcut.csv` &rarr; You can search for opened files (user filter possible)
