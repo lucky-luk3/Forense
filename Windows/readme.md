@@ -109,7 +109,7 @@ Files stored in: `C:\Windows\System32\winevt\Logs`
 >LogParser "SELECT EventID,Message,COmputerName INTO fichero.XML FROM C:\Users\luisf\Documents\Security.evtx " -i:EVT -o:xml  
 >LogParser file:W9Logon.sql   &rarr; execute this sentence  
 ```
-[tool] Evtx Explorer -
+[tool] Evtx Explorer - GUI - Powerfull filters
 [tool] Powershell - Script log.ps1 - helps to extract info from event files.
 ```PS
 >.\Logs.ps1 -Path  .\System.evtx -StartDays 15 -EventID 7045 -message PSEXEC | Format-List
@@ -134,6 +134,7 @@ Files stored in: `C:\Windows\System32\winevt\Logs`
 
 #### Application
 * 7045 &rarr; new service was installed in the system (windows server 2016?)
+* 7035 and 7036 &rarr; PSExec events
 
 
 ### Logon types
