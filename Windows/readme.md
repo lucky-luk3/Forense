@@ -97,8 +97,61 @@ When memory is full of data, the OS create pagefile and use it like memory.
 `strings pagefile.sys > strings_pag.txt`  
 `findstr /I url strings_pag.txt`
 
+## Event Analysis
+We could change group policy in order to log more information.  
+Computer configuration/Windows Settings/Security Settings/Local Policies/Audit Policy/  
+Files stored in: `C:\Windows\System32\winevt\Logs`  
+[tool] LogParser - SQL sintaxis - offline - local or remote - called like a COM object - python
+```
+>logparser.exe -h -i:EVT &rarr; show info about this format and what fields it's possible to ask about.  
+>LogParser "SELECT EventID FROM C:\Users\luisf\Documents\Security.evtx " -i:EVT  
+>LogParser "SELECT EventID,Message,COmputerName FROM C:\Users\luisf\Documents\Security.evtx " -i:EVT -o:DATAGRID  
+>LogParser "SELECT EventID,Message,COmputerName INTO fichero.XML FROM C:\Users\luisf\Documents\Security.evtx " -i:EVT -o:xml  
+>SELECT SourceName, EventID MUL(PROPCOUNT(*) ON (SourceName),100.0) AS Percent FROM Security GROUP BY SourceName, EvenID ORDER BY SourceName, Percent DESC  
+```
+[tool] Evtx Explorer -
+[tool] Powershell - 
+
+### Events most used
+#### Security
+* 4624 &rarr; Logon.
+* 4625 &rarr; Failed logon.
+* 4634 &rarr; Logoff.
+* 4649 &rarr; A replay attack was detected (smb attack using hash, old ).
+* 4675 &rarr; SIDs were filteres, when you have a filter to some users and it tries to logon.
+* 4778 &rarr; A session was reconnected to a Windows Station. 
+* 4800 &rarr; waskstation was locked.
+* 4801 &rarr; waskstation was unlocked.
+* 4802 &rarr; screen saver was invoked.
+* 4803 &rarr; screen saver was dismissed.
+* 5632 &rarr; Request to authenticate to a wireless network.
+* 5633 &rarr; Request to authenticate to a wired network.
+
+#### Application
+* 7045 &rarr; new service was installed in the system (windows server 2016?)
+
+
+### Logon types
+* 2 &rarr; Interactive
+* 10 &rarr; Remote Interactive
+* 4 &rarr; Batch
+* 5 &rarr; Service
+* 7 &rarr; Unlock
+* 8 &rarr; Network clear text
+* 9 &rarr; New Credentials
+* 11 &rarr; Cached Logon
+
 ## WMI
 You can search for the commands abailable to ask. Ejecute &rarr; WBEMTEST.  
 Conect to a computer, Open Class, it's possible to search for a command and you can see the parameters and response.  
 ### Shortcut
 * `Get-WmiObject -Class win32_shortcutfile -ComputerName . | Export-Csv C:\tmp\shortcut.csv` &rarr; You can search for opened files (user filter possible)
+
+## Attacks profiling
+* Meterpreter psexec
+    * Login (event 4624, type remote, random source machine)
+    * Create a service (event 7045) kill them
+    * Close handle
+    * Delete ".exe"
+    * Create meterpreter in memory
+    
