@@ -107,10 +107,15 @@ Files stored in: `C:\Windows\System32\winevt\Logs`
 >LogParser "SELECT EventID FROM C:\Users\luisf\Documents\Security.evtx " -i:EVT  
 >LogParser "SELECT EventID,Message,COmputerName FROM C:\Users\luisf\Documents\Security.evtx " -i:EVT -o:DATAGRID  
 >LogParser "SELECT EventID,Message,COmputerName INTO fichero.XML FROM C:\Users\luisf\Documents\Security.evtx " -i:EVT -o:xml  
->SELECT SourceName, EventID MUL(PROPCOUNT(*) ON (SourceName),100.0) AS Percent FROM Security GROUP BY SourceName, EvenID ORDER BY SourceName, Percent DESC  
+>LogParser file:W9Logon.sql   &rarr; execute this sentence  
 ```
 [tool] Evtx Explorer -
-[tool] Powershell - 
+[tool] Powershell - Script log.ps1 - helps to extract info from event files.
+```PS
+>.\Logs.ps1 -Path  .\System.evtx -StartDays 15 -EventID 7045 -message PSEXEC | Format-List
+>Get-WinEvent
+>LogParser file:W8Logon.sql
+```
 
 ### Events most used
 #### Security
