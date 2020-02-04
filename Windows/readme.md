@@ -147,6 +147,72 @@ Files stored in: `C:\Windows\System32\winevt\Logs`
 * 9 &rarr; New Credentials
 * 11 &rarr; Cached Logon
 
+
+## Windows Registry  
+[tool] RegRipper.  
+[tool] Windows Registry Recovery.  
+[tool] Autoruns - Sysinternals - Its possible to hide Microsoft entries.  
+Copy with shadows copies or FTK  
+* HKEY_CLASSES_ROOT (HKCR) &rarr; How must be executed an application --> (HKLM\Software\Clases)
+* HKEY_CURRENT_USER (HKCU) &rarr; Profile of the user logged.
+* HKEY_LOCAL_MACHINE (HKLM) &rarr; OS configuration.
+* HKEY_USERS (HKU) &rarr; Profiles in the OS.
+* HKEY_CURRENT_CONFIG (HKCC) &rarr; Hardware profiles.
+
+* ntuser.dat &rarr; C:\Users\user1\ &rarr; Recently used files and user preferences
+* Default &rarr; C:\Windows\system32\config &rarr;  System settings
+* SAM  &rarr; C:\Windows\system32\config &rarr; User account management and security settings
+* Security &rarr; C:\Windows\system32\config &rarr;  Security settings
+* Software &rarr; C:\Windows\system32\config &rarr; All installed programs and their settings
+* System &rarr; C:\Windows\system32\config &rarr; System settings
+
+`>reg query HKLM\Software\Classes`
+`wmi `  &rarr; Look for
+`PowerShell`
+
+### Persistence entries
+Userland:  
+* HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run
+* HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\RunOnce
+Admin Privs:  
+* HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+* HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce
+* HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run
+* HKLM\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Run
+* HKCU\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnce  
+
+smss.exe  
+* HKLM\SYSTEM\CurrentControlSet\Control\hivelist
+* HKEY_LOCAL_MACHINE\SYSTEM\ControlSet002\Control\Session Manager
+
+winlogon:  
+* HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon
+Secure Attention Sequence (SAS) (Ctrl+Alt+Del)  
+* HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Notify
+
+Explorer.exe:  
+* HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Shell
+* HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\IniFileMapping\system.ini\boot
+
+Startup Keys:  
+* HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders
+* HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+* HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+* HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders
+
+Services:  
+* HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services
+
+
+
+## File History
+[tool] ESEDatabaseView - Nirsoft
+HKLM\System\CurrentControlSet\Services\fhsvc\Configs &rarr; C:\Users\user\AppData\Local\Microsoft\Windows\FileHistory\Configuration\Config &rarr; Catalog.edb and Config.xml
+* UserFolder &rarr; Folder that will be saved
+* FolderExclude &rarr;  Folder that will be skiped
+* Target &rarr;  Destination of the information
+`fsutil usn enumdata 1 0 1 C:` 
+
 ## WMI
 You can search for the commands abailable to ask. Ejecute &rarr; WBEMTEST.  
 Conect to a computer, Open Class, it's possible to search for a command and you can see the parameters and response.  
@@ -160,4 +226,6 @@ Conect to a computer, Open Class, it's possible to search for a command and you 
     * Close handle
     * Delete ".exe"
     * Create meterpreter in memory
-    
+* Pass the Hash
+    * Users debug privilege
+    * Audit object access group policy
