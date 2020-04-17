@@ -229,3 +229,35 @@ Conect to a computer, Open Class, it's possible to search for a command and you 
 * Pass the Hash
     * Users debug privilege
     * Audit object access group policy
+    
+## Memory Analysis
+* Netstat &rarr; netscan
+* lsa secrets &rarr; lsadump
+* Hashes NTLM &rarr; hashdump
+* DNS cache
+    * Identify host file &rarr; filescan | grep -i hosts
+    * Dump file &rarr; dumpfiles -Q 0x2192f90 -D OUTDIR --name
+    * Extract strings &rarr; strings OUTDIR/file.None.0x8211f1f8.hosts.dat
+* Services &rarr; svcscan
+* Last services created in volshell:
+   This code shows created or modified services in last three timestamps. It's possible that this commnad shows more services than svcsacn, it could by because it's possible to create hidden services.
+```python
+ import volatility.plugins.registry.registryapi as registryapi
+ regapi = registryapi.RegistryApi(self._config)
+ key = "ControlSet001\Services"
+ subkeys = regapi.reg_get_all_subkeys("system", key)
+ services = dict((s.Name, int(s.LastWriteTime)) for s in subkeys)
+ times = sorted(set(services.values()), reverse=True)
+ top_three = times[0:3]
+ for time in top_three:
+   for name, ts in services.items():
+      if ts == time:
+         print time, name
+```
+* Print registry key &rarr; printkey -K 'ControlSet001\Services\HiddenService'
+* Kernel modules &rarr; modules | grep bad.sys
+* Cliboard data &rarr; clipboard
+    * If file is coppied to clipboard, not all document are in the clipboard, with -v option, it's possible to see the full path of the file.
+* Master File Table &rarr; mftparser
+   * for capture data streams it's necessary &rarr; --output-file=mftverbose.txt –D mftoutput
+    
