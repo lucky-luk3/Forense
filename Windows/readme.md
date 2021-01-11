@@ -166,7 +166,8 @@ Copy with shadows copies or FTK
 * Software &rarr; C:\Windows\system32\config &rarr; All installed programs and their settings
 * System &rarr; C:\Windows\system32\config &rarr; System settings
 
-`>reg query HKLM\Software\Classes`
+
+`>reg query HKLM\Software\Classes`  
 `wmi `  &rarr; Look for
 `PowerShell`
 
@@ -203,10 +204,77 @@ Startup Keys:
 Services:  
 * HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services
 
+## Active directory Persistence
+### Golden Ticket
+When an attacker has krbtgt hash can create his own TGT for any user in the domain.  
+It allows him to request to de DC for any TGS using the appropriated TGT.
+
+### Silver Ticket
+When the attacker has a hash for a service account, are able to create valid TGS for thi service.  
+It's possible to do this with any user when you have a NTLM hash of the service.  
+It's very useful because are not any interaction with the DC. In other hand, it's more common that 
+the service password was changed than krbtgt one.  
+
+### Skeleton Key
+This technique patch a lsass process in the domain controller  and allows access as any user with a single password.  
+This technique is not persistence across reboots.  
+
+### DSRM (Directory Services Restore Mode)
+When an attacker has privileged access to the DC, he can extract local password hashes from LSA.  
+This technique uses the local administrator password, this password is used to promote a server to DC.  
+This password is also called "SafeModePassword".  
+By default this account is not able to login over the network. 
+Ir order to be able to use it, it's necessary to change:  
+* "HKLM:\System\CurrentControlSet\Control\Lsa\"
+    * "DsrmAdminLogonBehavior" to "2" DWORD type.
+    
+### Custom SSP (Security Support Provider)
+SSP is a dll that provides ways to obtain authenticated connections. (pe NTLM, Kerberos...)  
+Mimikatz provides a custom SSP (mimilib.dll), it provides local logons, service account and machine account passwords in clear text on the target server.  
+This technique allow to an attacker to obtain clear text passwords.  
+It's necessary to change:  
+* Put mimilib in system32 
+* "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\OSConfig\" and "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\"
+     * "SecurityPackages" add mimilib
+
+It's also possible to inject this ddl in lsass process but maybe is unstable.   
+It will generate a log file in "C:\Windows\System32\kiwissp.log"
+
+### AdminSDHolder - ACLs
+AdminSDHolder is an feature that try to protect "protected groups" for changes.  
+Every 60 minutes, the ACLs from AdminSDHolder are applied to protected groups.  
+If an attacker with elevated permissions modify AdminSDHolder ACLs, it's possible to modify also all the others sensitive groups.  
+Protected Groups:  
+* Account Operators (Cannot modify DA/EA/BA groups. Can modify nested group within these groups)
+* Backup Operators (Backup GPO, edit to add SID of controlled account to a privileged group and Restore)
+* Server Operators (Run commands as system)
+* Print Operator (Copy ntds.dit backup, load device drivers)
+* Domain Admin
+* Replicator
+* Enterprise Admins
+* Domain Controllers
+* Read-only Domain Controllers
+* Schema Admins
+* Administrators
+
+### Rights Abuse - ACLs
+It's possible to modify ACLs for root domain admin object, it provides to an attacker the possibility to run "DCSync"  
+It is silent because the log level in this object is not so high.  
+To perform DCSync it's possible to find full control in some user but also it is possible with 3 permissions:  
+* Replicating Directory Changes
+* Replicating Directory Changes All
+* Replicating Directory Changes in Filtered Set
+
+This user does not need to be in domain admin group.
+
+### Security Descriptors - ACLs
+It's possible to modify DACLs and SACLs for some object or service, in order to allow privileges only for a user.  
+For example, DCOM, WMI and PowerShell Remote.
+
 
 
 ## File History
-[tool] ESEDatabaseView - Nirsoft
+[tool] ESEDatabaseView - Nirsoft  
 HKLM\System\CurrentControlSet\Services\fhsvc\Configs &rarr; C:\Users\user\AppData\Local\Microsoft\Windows\FileHistory\Configuration\Config &rarr; Catalog.edb and Config.xml
 * UserFolder &rarr; Folder that will be saved
 * FolderExclude &rarr;  Folder that will be skiped
@@ -256,8 +324,8 @@ Conect to a computer, Open Class, it's possible to search for a command and you 
 ```
 * Print registry key &rarr; printkey -K 'ControlSet001\Services\HiddenService'
 * Kernel modules &rarr; modules | grep bad.sys
-* Cliboard data &rarr; clipboard
-    * If file is coppied to clipboard, not all document are in the clipboard, with -v option, it's possible to see the full path of the file.
+* Clipboard data &rarr; clipboard
+    * If file is copied to clipboard, not all document are in the clipboard, with -v option, it's possible to see the full path of the file.
 * Master File Table &rarr; mftparser
    * for capture data streams it's necessary &rarr; --output-file=mftverbose.txt –D mftoutput
     
