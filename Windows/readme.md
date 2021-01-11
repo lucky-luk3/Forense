@@ -300,6 +300,7 @@ Conect to a computer, Open Class, it's possible to search for a command and you 
     
 ## Memory Analysis
 * Netstat &rarr; netscan
+* Connections &rarr; connscan
 * lsa secrets &rarr; lsadump
 * Hashes NTLM &rarr; hashdump
 * DNS cache
@@ -307,6 +308,10 @@ Conect to a computer, Open Class, it's possible to search for a command and you 
     * Dump file &rarr; dumpfiles -Q 0x2192f90 -D OUTDIR --name
     * Extract strings &rarr; strings OUTDIR/file.None.0x8211f1f8.hosts.dat
 * Services &rarr; svcscan
+* psxview &rarr; search for hidden process.
+* dlllist &rarr; dll loaded
+* ldrmodules &rarr; search for hidden dlls.
+* malfind &rarr; find hidden dlls or injected in process.
 * Last services created in volshell:
    This code shows created or modified services in last three timestamps. It's possible that this commnad shows more services than svcsacn, it could by because it's possible to create hidden services.
 ```python
@@ -327,5 +332,16 @@ Conect to a computer, Open Class, it's possible to search for a command and you 
 * Clipboard data &rarr; clipboard
     * If file is copied to clipboard, not all document are in the clipboard, with -v option, it's possible to see the full path of the file.
 * Master File Table &rarr; mftparser
-   * for capture data streams it's necessary &rarr; --output-file=mftverbose.txt –D mftoutput
+    * for capture data streams it's necessary &rarr; --output-file=mftverbose.txt –D mftoutput
+* Autoruns &rarr; Search for persistences. Necessary to install it https://github.com/tomchop/volatility-autoruns
     
+### Use cases
+#### Domain connection
+1. connscan. Shows PID of process and connection destination.
+2. psscan.
+3. yarascan -Y "domain". Search for domain in process.
+4. handles -p PID -t Mutant. Search for mutex.
+5. handles -p PID -t Mutant. Handles to files, search for dlls or binaries.
+6. dlllist -p PID. Search for dlls.
+7. ldrmodules -p PID. Search for hidden dlls. (grep)
+8. dlldump -p PID -b 0x00010000 -D dump. Dump dlls.
