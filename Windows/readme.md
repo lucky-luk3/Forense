@@ -149,6 +149,7 @@ Files stored in: `C:\Windows\System32\winevt\Logs`
 
 
 ## Windows Registry  
+[tool] Zimmerman - Registry Explorer
 [tool] RegRipper.  
 [tool] Windows Registry Recovery.  
 [tool] Autoruns - Sysinternals - Its possible to hide Microsoft entries.  
@@ -271,7 +272,12 @@ This user does not need to be in domain admin group.
 It's possible to modify DACLs and SACLs for some object or service, in order to allow privileges only for a user.  
 For example, DCOM, WMI and PowerShell Remote.
 
-
+## Shimcache
+[tool] Event Log Explorer
+It records last execution time for apps. 
+```
+HKLM\SYSTEM\CurrentControlSet\Control\SessionManager\AppCompatCache\AppCompatCache
+```
 
 ## File History
 [tool] ESEDatabaseView - Nirsoft  
@@ -334,7 +340,16 @@ Conect to a computer, Open Class, it's possible to search for a command and you 
 * Master File Table &rarr; mftparser
     * for capture data streams it's necessary &rarr; --output-file=mftverbose.txt –D mftoutput
 * Autoruns &rarr; Search for persistences. Necessary to install it https://github.com/tomchop/volatility-autoruns
-    
+   
+##MFT (Master File Table)
+```
+# MFT to CSV
+[zimmerman] .\MFTECmd.exe -f "C:\Users\test\test\collected\2021-04-04T171913_aaaa\C\$MFT" --body "C:\Users\test\Documents" --blf --bdl C:
+# CSV to Timeline
+[sleuthkit] perl mactime.pl -z UTC -y -d -b "C:\Users\zc01375\Documents\20210405145110_MFTECmd_$MFT_Output.body" > "C:\Users\zc01375\Documents\BUDB06.csv"
+```
+[tool] Zimmerman - Timeline Explorer
+
 ### Use cases
 #### Domain connection
 1. connscan. Shows PID of process and connection destination.
