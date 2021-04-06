@@ -273,7 +273,7 @@ It's possible to modify DACLs and SACLs for some object or service, in order to 
 For example, DCOM, WMI and PowerShell Remote.
 
 ## Shimcache
-[tool] Event Log Explorer
+[tool] Zimmerman - Registry Explorer
 It records last execution time for apps. 
 ```
 HKLM\SYSTEM\CurrentControlSet\Control\SessionManager\AppCompatCache\AppCompatCache
