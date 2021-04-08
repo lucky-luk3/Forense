@@ -5,6 +5,12 @@
 Use `\\?\` after path to access to a raw file. 
 `icacls.exe \\?\C:\Users\user1\Desktop\keys` &rarr; show you a acls of this file..  
 
+## USRJRNL (user journal)
+File in C:\$Extend\$J
+```
+.\MFTECmd.exe -f "C:\Users\test\Documents\test\collected\2021-04-04T171913_BUDB06\C\$Extend\$J" --csv "C:\Users\test\Documents"
+```
+
 
 ## Recycle Bin
 ### Windows 10
