@@ -352,7 +352,7 @@ Conect to a computer, Open Class, it's possible to search for a command and you 
 # MFT to CSV
 [zimmerman] .\MFTECmd.exe -f "C:\Users\test\test\collected\2021-04-04T171913_aaaa\C\$MFT" --body "C:\Users\test\Documents" --blf --bdl C:
 # CSV to Timeline
-[sleuthkit] perl mactime.pl -z UTC -y -d -b "C:\Users\zc01375\Documents\20210405145110_MFTECmd_$MFT_Output.body" > "C:\Users\zc01375\Documents\BUDB06.csv"
+[sleuthkit] perl mactime.pl -z UTC -y -d -b "C:\Users\test\Documents\20210405145110_MFTECmd_$MFT_Output.body" > "C:\Users\test\Documents\test.csv"
 ```
 [tool] Zimmerman - Timeline Explorer
 
